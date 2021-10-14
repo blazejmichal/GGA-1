@@ -15,15 +15,17 @@ import model.Point.Orientation;
 public class Task {
 
   private List<Point> input = Lists.newArrayList(
+      new Point(2, 0),
       new Point(0, 10),
       new Point(5, 7),
       new Point(10, 11),
       new Point(15, 3),
       new Point(20, 11),
+      new Point(18, 0),
       new Point(20, -11),
-      new Point(15, -3),
+      new Point(15, -7),
       new Point(10, -11),
-      new Point(5, -7),
+      new Point(5, -3),
       new Point(0, -10)
   );
 
@@ -54,17 +56,17 @@ public class Task {
 
     if (second.getY() < first.getY() && second.getY() < third.getY()) {
       // TODO: co z porownaniem do trzeciego?
-      if (second.getX() < first.getX()) {
+      if (second.getX() < first.getX() && second.getX() > third.getX()) {
         second.setOrientation(Orientation.UP);
         maximums.add(second);
-      } else if (second.getX() > first.getX()) {
+      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
         second.setOrientation(Orientation.DOWN);
       }
     } else if (second.getY() > first.getY() && second.getY() > third.getY()) {
       // TODO: co z porownaniem do trzeciego?
-      if (second.getX() < first.getX()) {
+      if (second.getX() < first.getX() && second.getX() > third.getX()) {
         second.setOrientation(Orientation.UP);
-      } else if (second.getX() > first.getX()) {
+      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
         second.setOrientation(Orientation.DOWN);
         minimums.add(second);
       }
