@@ -20,7 +20,7 @@ public class Task {
       new Point(0, -2)
   );
 
-  public void run(){
+  public void run() {
 
     Collections.reverse(this.input);
     List<Point> minimums = Lists.newLinkedList();
@@ -28,7 +28,7 @@ public class Task {
     for (int i = 0; i < this.input.size(); i++) {
       Point first = i == 0 ? this.input.get(this.input.size() - 1) : this.input.get(i - 1);
       Point second = this.input.get(i);
-      Point third = i == this.input.size() ? this.input.get(0) : this.input.get(i + 1);
+      Point third = i == (this.input.size() - 1) ? this.input.get(0) : this.input.get(i + 1);
       this.verifyOrientation(first, second, third, minimums, maximums);
     }
   }
