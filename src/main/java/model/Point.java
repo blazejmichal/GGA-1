@@ -15,6 +15,8 @@ public class Point {
 
   private Orientation orientation;
 
+  private LocalExtreme localExtreme;
+
   public Point(Integer x, Integer y) {
     this.x = x;
     this.y = y;
@@ -23,9 +25,13 @@ public class Point {
   public static enum Orientation {
     UP,
     DOWN,
-    NEUTRAL,
-    LEFT,
-    RIGHT;
+    NEUTRAL;
+  }
+
+  public static enum LocalExtreme {
+    MINIMUM,
+    MAXIMUM,
+    NONE;
   }
 
 }
