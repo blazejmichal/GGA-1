@@ -29,8 +29,8 @@ public class Point {
   }
 
   public static enum LocalExtreme {
-    MINIMUM,
-    MAXIMUM,
+    LOCAL_MINIMUM,
+    LOCAL_MAXIMUM,
     NONE;
   }
 

@@ -24,6 +24,8 @@ public class Task {
   private Point lowestUpLocalMinimum;
   private Point highestDownLocalMaximum;
   private Boolean core;
+  private List<Point> localMinimums = Lists.newLinkedList();
+  private List<Point> localMaximums = Lists.newLinkedList();
 
   public Task(Integer id, List<Point> input) {
     this.id = id;
@@ -57,7 +59,8 @@ public class Task {
   ) {
 
     if (isLocalMinimum(first, second, third)) {
-      second.setLocalExtreme(LocalExtreme.MINIMUM);
+      second.setLocalExtreme(LocalExtreme.LOCAL_MINIMUM);
+      this.localMinimums.add(second);
       if (second.getX() < first.getX() && second.getX() > third.getX()) {
         second.setOrientation(Orientation.UP);
         this.upMinimums.add(second);
@@ -65,7 +68,8 @@ public class Task {
         second.setOrientation(Orientation.DOWN);
       }
     } else if (isLocalMaximum(first, second, third)) {
-      second.setLocalExtreme(LocalExtreme.MAXIMUM);
+      second.setLocalExtreme(LocalExtreme.LOCAL_MAXIMUM);
+      this.localMaximums.add(second);
       if (second.getX() < first.getX() && second.getX() > third.getX()) {
         second.setOrientation(Orientation.UP);
       } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
