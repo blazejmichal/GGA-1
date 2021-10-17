@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,15 +18,11 @@ public class Task {
 
   private Integer id;
   private List<Point> input = Lists.newArrayList();
-  private List<Point> upMinimums = Lists.newLinkedList();
-  private List<Point> downMaximums = Lists.newLinkedList();
   private Point minimum;
   private Point maximum;
-  private Point lowestUpLocalMinimum;
-  private Point highestDownLocalMaximum;
+  private Point lowestPositiveLocalMinimum;
+  private Point highestPositiveLocalMaximum;
   private Boolean core;
-  private List<Point> localMinimums = Lists.newLinkedList();
-  private List<Point> localMaximums = Lists.newLinkedList();
 
   public Task(Integer id, List<Point> input) {
     this.id = id;
@@ -34,25 +31,51 @@ public class Task {
 
   public void run() {
 
-    Collections.reverse(this.input);
-    for (int i = 0; i < this.input.size(); i++) {
-      Point first = i == 0 ? this.input.get(this.input.size() - 1) : this.input.get(i - 1);
-      Point second = this.input.get(i);
-      Point third = i == (this.input.size() - 1) ? this.input.get(0) : this.input.get(i + 1);
-      this.sgn(first, second, third);
+    try {
+      Collections.reverse(this.input);
+      this.validateInput();
+      for (int i = 0; i < this.input.size(); i++) {
+        Point first = i == 0 ? this.input.get(this.input.size() - 1) : this.input.get(i - 1);
+        Point second = this.input.get(i);
+        Point third = i == (this.input.size() - 1) ? this.input.get(0) : this.input.get(i + 1);
+        this.verifyExtreme(first, second, third);
+        this.verifyOrientation(first, second, third);
+      }
+      this.minimum = this.input.stream().min(Comparator.comparing(Point::getY)).orElseThrow(
+          (Supplier<Throwable>) () -> new Exception("Nie można znaleźć minimalny punkt figury"));
+      this.maximum = this.input.stream().max(Comparator.comparing(Point::getY)).orElseThrow(
+          (Supplier<Throwable>) () -> new Exception("Nie można znaleźć maksymalny punkt figury"));
+      this.lowestPositiveLocalMinimum =
+          this.input.stream()
+                    .filter(point -> Orientation.POSITIVE.equals(point.getOrientation())
+                        && LocalExtreme.LOCAL_MINIMUM.equals(point.getLocalExtreme()))
+                    .min(Comparator.comparing(Point::getY))
+                    .orElseThrow((Supplier<Throwable>) () -> new Exception(
+                        "Nie można znaleźć minimum lokalnego ograniczającego jądro"));
+      this.highestPositiveLocalMaximum =
+          this.input.stream()
+                    .filter(point -> Orientation.POSITIVE.equals(point.getOrientation())
+                        && LocalExtreme.LOCAL_MAXIMUM.equals(point.getLocalExtreme()))
+                    .max(Comparator.comparing(Point::getY))
+                    .orElseThrow((Supplier<Throwable>) () -> new Exception(
+                        "Nie można znaleźć maximum lokalnego ograniczającego jądro"));
+      this.verifyCoreExistence();
+      this.printResults();
+    } catch (Throwable exception) {
+      System.out.println(this.id);
+      System.out.println(exception.getMessage());
+      System.out.println(System.lineSeparator());
     }
-    this.minimum = this.input.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
-    this.maximum = this.input.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
-    this.lowestUpLocalMinimum =
-        this.upMinimums.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
-    this.highestDownLocalMaximum =
-        this.downMaximums.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
-    this.verifyCoreExistence();
-    this.printResults();
   }
 
-  // Funkcja signum z labow?
-  public void sgn(
+  public void validateInput() throws Exception {
+
+    if (this.input.size() < 3) {
+      throw new Exception("Niewystarczająca ilość wierzchołków.");
+    }
+  }
+
+  public void verifyExtreme(
       Point first,
       Point second,
       Point third
@@ -60,25 +83,29 @@ public class Task {
 
     if (isLocalMinimum(first, second, third)) {
       second.setLocalExtreme(LocalExtreme.LOCAL_MINIMUM);
-      this.localMinimums.add(second);
-      if (second.getX() < first.getX() && second.getX() > third.getX()) {
-        second.setOrientation(Orientation.UP);
-        this.upMinimums.add(second);
-      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
-        second.setOrientation(Orientation.DOWN);
-      }
     } else if (isLocalMaximum(first, second, third)) {
       second.setLocalExtreme(LocalExtreme.LOCAL_MAXIMUM);
-      this.localMaximums.add(second);
-      if (second.getX() < first.getX() && second.getX() > third.getX()) {
-        second.setOrientation(Orientation.UP);
-      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
-        second.setOrientation(Orientation.DOWN);
-        this.downMaximums.add(second);
-      }
+    } else {
+      second.setLocalExtreme(LocalExtreme.NONE);
+    }
+  }
+
+  public void verifyOrientation(
+      Point first,
+      Point second,
+      Point third
+  ) {
+
+    Integer result = (second.getY() - first.getY())
+        * (third.getX() - second.getX())
+        - (second.getX() - first.getX())
+        * (third.getY() - second.getY());
+    if (result > 0) {
+      second.setOrientation(Orientation.POSITIVE);
+    } else if (result < 0) {
+      second.setOrientation(Orientation.NEGATIVE);
     } else {
       second.setOrientation(Orientation.NEUTRAL);
-      second.setLocalExtreme(LocalExtreme.NONE);
     }
   }
 
@@ -98,7 +125,7 @@ public class Task {
 
   public void verifyCoreExistence() {
 
-    if (this.highestDownLocalMaximum.getY() > this.lowestUpLocalMinimum.getY()) {
+    if (this.highestPositiveLocalMaximum.getY() > this.lowestPositiveLocalMinimum.getY()) {
       this.core = Boolean.FALSE;
     } else {
       this.core = Boolean.TRUE;
@@ -109,9 +136,59 @@ public class Task {
 
     System.out.println(this.id);
     System.out.println(String.format("Posiada jądro: %s", this.core));
-    System.out.println(String.format("yLocalMin= %s", this.lowestUpLocalMinimum.getY()));
-    System.out.println(String.format("yLocalMax= %s", this.highestDownLocalMaximum.getY()));
+    System.out.println(String.format("yLocalMin= %s", this.lowestPositiveLocalMinimum.getY()));
+    System.out.println(String.format("yLocalMax= %s", this.highestPositiveLocalMaximum.getY()));
     System.out.println(System.lineSeparator());
   }
 
 }
+
+// Funkcja signum z labow?
+//  public void sgn(
+//      Point first,
+//      Point second,
+//      Point third
+//  ) {
+//
+//    if (isLocalMinimum(first, second, third)) {
+//      second.setLocalExtreme(LocalExtreme.LOCAL_MINIMUM);
+//      this.localMinimums.add(second);
+//      if (second.getX() < first.getX() && second.getX() > third.getX()) {
+//        second.setOrientation(Orientation.UP);
+//        this.upMinimums.add(second);
+//      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
+//        second.setOrientation(Orientation.DOWN);
+//      }
+//    } else if (isLocalMaximum(first, second, third)) {
+//      second.setLocalExtreme(LocalExtreme.LOCAL_MAXIMUM);
+//      this.localMaximums.add(second);
+//      if (second.getX() < first.getX() && second.getX() > third.getX()) {
+//        second.setOrientation(Orientation.UP);
+//      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
+//        second.setOrientation(Orientation.DOWN);
+//        this.downMaximums.add(second);
+//      }
+//    } else {
+//      second.setOrientation(Orientation.NEUTRAL);
+//      second.setLocalExtreme(LocalExtreme.NONE);
+//    }
+//  }
+
+//  public void run() {
+//
+//    Collections.reverse(this.input);
+//    for (int i = 0; i < this.input.size(); i++) {
+//      Point first = i == 0 ? this.input.get(this.input.size() - 1) : this.input.get(i - 1);
+//      Point second = this.input.get(i);
+//      Point third = i == (this.input.size() - 1) ? this.input.get(0) : this.input.get(i + 1);
+//      this.sgn(first, second, third);
+//    }
+//    this.minimum = this.input.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
+//    this.maximum = this.input.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
+//    this.lowestUpLocalMinimum =
+//        this.upMinimums.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
+//    this.highestDownLocalMaximum =
+//        this.downMaximums.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
+//    this.verifyCoreExistence();
+//    this.printResults();
+//  }

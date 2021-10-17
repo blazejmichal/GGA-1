@@ -23,8 +23,8 @@ public class Point {
   }
 
   public static enum Orientation {
-    UP,
-    DOWN,
+    POSITIVE,
+    NEGATIVE,
     NEUTRAL;
   }
 
