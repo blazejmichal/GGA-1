@@ -14,7 +14,7 @@ import model.Point.Orientation;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Task {
+public class Task implements IntersectingPointCalculator {
 
   private Integer id;
   private List<Point> input = Lists.newArrayList();
@@ -22,7 +22,8 @@ public class Task {
   private Point maximum;
   private Point lowestPositiveLocalMinimum;
   private Point highestPositiveLocalMaximum;
-  private Boolean core;
+  private Boolean isCore;
+  private List<Point> core = Lists.newLinkedList();
 
   public Task(Integer id, List<Point> input) {
     this.id = id;
@@ -60,6 +61,8 @@ public class Task {
                     .orElseThrow((Supplier<Throwable>) () -> new Exception(
                         "Nie można znaleźć maximum lokalnego ograniczającego jądro"));
       this.verifyCoreExistence();
+      Collections.reverse(this.input);
+      this.calculateCorePoints();
       this.printResults();
     } catch (Throwable exception) {
       System.out.println(this.id);
@@ -126,9 +129,9 @@ public class Task {
   public void verifyCoreExistence() {
 
     if (this.highestPositiveLocalMaximum.getY() > this.lowestPositiveLocalMinimum.getY()) {
-      this.core = Boolean.FALSE;
+      this.isCore = Boolean.FALSE;
     } else {
-      this.core = Boolean.TRUE;
+      this.isCore = Boolean.TRUE;
     }
   }
 
@@ -139,6 +142,87 @@ public class Task {
     System.out.println(String.format("yLocalMin= %s", this.lowestPositiveLocalMinimum.getY()));
     System.out.println(String.format("yLocalMax= %s", this.highestPositiveLocalMaximum.getY()));
     System.out.println(System.lineSeparator());
+  }
+
+  public void calculateCorePoints() {
+
+    for (int i = 0; i < this.input.size(); i++) {
+      Point first = this.input.get(i);
+      Point second = i == this.input.size() - 1 ? this.input.get(0) : this.input.get(i + 1);
+      Boolean isTopRightCoreCornerIntersection = this.arePointsIntersectingCoreVerticalLimit(
+          first,
+          second,
+          this.lowestPositiveLocalMinimum
+      );
+      if (isTopRightCoreCornerIntersection) {
+        Point topRightCornerPoint = this.calculateIntersectingPoint(
+            first,
+            second,
+            this.lowestPositiveLocalMinimum.getY()
+        );
+        this.core.add(topRightCornerPoint);
+        continue;
+      }
+      Boolean isBottomRightCorner = this.arePointsIntersectingCoreVerticalLimit(
+          first,
+          second,
+          this.highestPositiveLocalMaximum
+      );
+      if (isBottomRightCorner) {
+        Point bottomRightCornerPoint = this.calculateIntersectingPoint(
+            first,
+            second,
+            this.highestPositiveLocalMaximum.getY()
+        );
+        if (first.getY() <= this.lowestPositiveLocalMinimum.getY()
+            && first.getY() >= this.highestPositiveLocalMaximum.getY()) {
+          this.core.add(first);
+        }
+        this.core.add(bottomRightCornerPoint);
+        continue;
+      }
+      Boolean isBottomLeftCorner = this.arePointsIntersectingCoreVerticalLimit(
+          second,
+          first,
+          this.highestPositiveLocalMaximum
+      );
+      if (isBottomLeftCorner) {
+        Point bottomLeftCornerPoint = this.calculateIntersectingPoint(
+            second,
+            first,
+            this.highestPositiveLocalMaximum.getY()
+        );
+        this.core.add(bottomLeftCornerPoint);
+        continue;
+      }
+      Boolean isTopLeftCoreCornerIntersection = this.arePointsIntersectingCoreVerticalLimit(
+          second,
+          first,
+          this.lowestPositiveLocalMinimum
+      );
+      if (isTopLeftCoreCornerIntersection) {
+        Point topLeftCornerPoint = this.calculateIntersectingPoint(
+            second,
+            first,
+            this.lowestPositiveLocalMinimum.getY()
+        );
+        if (first.getY() <= this.lowestPositiveLocalMinimum.getY()
+            && first.getY() >= this.highestPositiveLocalMaximum.getY()) {
+          this.core.add(first);
+        }
+        this.core.add(topLeftCornerPoint);
+        continue;
+      }
+      Boolean isInCore = this.isPointInCore(
+          first,
+          this.lowestPositiveLocalMinimum.getY(),
+          this.highestPositiveLocalMaximum.getY()
+      );
+      if (isInCore) {
+        this.core.add(first);
+        continue;
+      }
+    }
   }
 
 }
