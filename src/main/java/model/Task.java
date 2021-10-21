@@ -24,6 +24,7 @@ public class Task implements IntersectingPointCalculator {
   private Point highestPositiveLocalMaximum;
   private Boolean isCore;
   private List<Point> core = Lists.newLinkedList();
+  private Double coreCircumference;
 
   public Task(Integer id, List<Point> input) {
     this.id = id;
@@ -59,8 +60,11 @@ public class Task implements IntersectingPointCalculator {
                     .max(Comparator.comparing(Point::getY))
                     .orElse(this.minimum);
       this.verifyCoreExistence();
-      Collections.reverse(this.input);
-      this.calculateCorePoints();
+      if (this.isCore) {
+        Collections.reverse(this.input);
+        this.calculateCorePoints();
+        this.calculateCoreCircumference();
+      }
       this.printResults();
     } catch (Throwable exception) {
       System.out.println(this.id);
@@ -160,7 +164,6 @@ public class Task implements IntersectingPointCalculator {
             this.lowestPositiveLocalMinimum.getY()
         );
         this.core.add(topRightCornerPoint);
-//        continue;
       }
 
       Boolean isBottomLeftCorner = this.arePointsIntersectingCoreVerticalLimit(
@@ -175,7 +178,6 @@ public class Task implements IntersectingPointCalculator {
             this.highestPositiveLocalMaximum.getY()
         );
         this.core.add(bottomLeftCornerPoint);
-//        continue;
       }
 
       Boolean isBottomRightCorner = this.arePointsIntersectingCoreVerticalLimit(
@@ -228,54 +230,17 @@ public class Task implements IntersectingPointCalculator {
     }
   }
 
+  public void calculateCoreCircumference() {
+
+    double distance = 0d;
+    for (int i = 0; i < this.input.size(); i++) {
+      Point first = this.input.get(i);
+      Point second = i == this.input.size() - 1 ? this.input.get(0) : this.input.get(i + 1);
+      distance = distance + Math.sqrt(
+          (second.getX() - first.getX()) * (second.getX() - first.getX())
+              + (second.getY() - first.getY()) * (second.getY() - first.getY()));
+    }
+    this.coreCircumference = distance;
+  }
+
 }
-
-// Funkcja signum z labow?
-//  public void sgn(
-//      Point first,
-//      Point second,
-//      Point third
-//  ) {
-//
-//    if (isLocalMinimum(first, second, third)) {
-//      second.setLocalExtreme(LocalExtreme.LOCAL_MINIMUM);
-//      this.localMinimums.add(second);
-//      if (second.getX() < first.getX() && second.getX() > third.getX()) {
-//        second.setOrientation(Orientation.UP);
-//        this.upMinimums.add(second);
-//      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
-//        second.setOrientation(Orientation.DOWN);
-//      }
-//    } else if (isLocalMaximum(first, second, third)) {
-//      second.setLocalExtreme(LocalExtreme.LOCAL_MAXIMUM);
-//      this.localMaximums.add(second);
-//      if (second.getX() < first.getX() && second.getX() > third.getX()) {
-//        second.setOrientation(Orientation.UP);
-//      } else if (second.getX() > first.getX() && second.getX() < third.getX()) {
-//        second.setOrientation(Orientation.DOWN);
-//        this.downMaximums.add(second);
-//      }
-//    } else {
-//      second.setOrientation(Orientation.NEUTRAL);
-//      second.setLocalExtreme(LocalExtreme.NONE);
-//    }
-//  }
-
-//  public void run() {
-//
-//    Collections.reverse(this.input);
-//    for (int i = 0; i < this.input.size(); i++) {
-//      Point first = i == 0 ? this.input.get(this.input.size() - 1) : this.input.get(i - 1);
-//      Point second = this.input.get(i);
-//      Point third = i == (this.input.size() - 1) ? this.input.get(0) : this.input.get(i + 1);
-//      this.sgn(first, second, third);
-//    }
-//    this.minimum = this.input.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
-//    this.maximum = this.input.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
-//    this.lowestUpLocalMinimum =
-//        this.upMinimums.stream().min(Comparator.comparing(Point::getY)).orElseThrow();
-//    this.highestDownLocalMaximum =
-//        this.downMaximums.stream().max(Comparator.comparing(Point::getY)).orElseThrow();
-//    this.verifyCoreExistence();
-//    this.printResults();
-//  }
