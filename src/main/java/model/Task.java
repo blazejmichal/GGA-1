@@ -147,6 +147,7 @@ public class Task implements IntersectingPointCalculator {
     for (int i = 0; i < this.input.size(); i++) {
       Point first = this.input.get(i);
       Point second = i == this.input.size() - 1 ? this.input.get(0) : this.input.get(i + 1);
+
       Boolean isTopRightCoreCornerIntersection = this.arePointsIntersectingCoreVerticalLimit(
           first,
           second,
@@ -161,6 +162,7 @@ public class Task implements IntersectingPointCalculator {
         this.core.add(topRightCornerPoint);
         continue;
       }
+
       Boolean isBottomRightCorner = this.arePointsIntersectingCoreVerticalLimit(
           first,
           second,
@@ -179,6 +181,7 @@ public class Task implements IntersectingPointCalculator {
         this.core.add(bottomRightCornerPoint);
         continue;
       }
+
       Boolean isBottomLeftCorner = this.arePointsIntersectingCoreVerticalLimit(
           second,
           first,
@@ -193,6 +196,7 @@ public class Task implements IntersectingPointCalculator {
         this.core.add(bottomLeftCornerPoint);
         continue;
       }
+
       Boolean isTopLeftCoreCornerIntersection = this.arePointsIntersectingCoreVerticalLimit(
           second,
           first,
@@ -211,6 +215,7 @@ public class Task implements IntersectingPointCalculator {
         this.core.add(topLeftCornerPoint);
         continue;
       }
+
       Boolean isInCore = this.isPointInCore(
           first,
           this.lowestPositiveLocalMinimum.getY(),
