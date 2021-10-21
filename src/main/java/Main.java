@@ -69,6 +69,21 @@ public class Main {
         )
     );
     task2.run();
+
+    Task task3 = new Task(
+        0,
+        Lists.newArrayList(
+            new Point(0, 10),
+            new Point(5, 7),
+            new Point(15, -5),
+            new Point(20, 11),
+            new Point(20, -11),
+            new Point(15, -7),
+            new Point(5, -3),
+            new Point(0, -10)
+        )
+    );
+    task3.run();
   }
 
 }
