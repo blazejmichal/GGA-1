@@ -160,7 +160,22 @@ public class Task implements IntersectingPointCalculator {
             this.lowestPositiveLocalMinimum.getY()
         );
         this.core.add(topRightCornerPoint);
-        continue;
+//        continue;
+      }
+
+      Boolean isBottomLeftCorner = this.arePointsIntersectingCoreVerticalLimit(
+          second,
+          first,
+          this.highestPositiveLocalMaximum
+      );
+      if (isBottomLeftCorner) {
+        Point bottomLeftCornerPoint = this.calculateIntersectingPoint(
+            second,
+            first,
+            this.highestPositiveLocalMaximum.getY()
+        );
+        this.core.add(bottomLeftCornerPoint);
+//        continue;
       }
 
       Boolean isBottomRightCorner = this.arePointsIntersectingCoreVerticalLimit(
@@ -179,21 +194,6 @@ public class Task implements IntersectingPointCalculator {
           this.core.add(first);
         }
         this.core.add(bottomRightCornerPoint);
-        continue;
-      }
-
-      Boolean isBottomLeftCorner = this.arePointsIntersectingCoreVerticalLimit(
-          second,
-          first,
-          this.highestPositiveLocalMaximum
-      );
-      if (isBottomLeftCorner) {
-        Point bottomLeftCornerPoint = this.calculateIntersectingPoint(
-            second,
-            first,
-            this.highestPositiveLocalMaximum.getY()
-        );
-        this.core.add(bottomLeftCornerPoint);
         continue;
       }
 
