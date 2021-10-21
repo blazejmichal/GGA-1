@@ -51,15 +51,13 @@ public class Task implements IntersectingPointCalculator {
                     .filter(point -> Orientation.POSITIVE.equals(point.getOrientation())
                         && LocalExtreme.LOCAL_MINIMUM.equals(point.getLocalExtreme()))
                     .min(Comparator.comparing(Point::getY))
-                    .orElseThrow((Supplier<Throwable>) () -> new Exception(
-                        "Nie można znaleźć minimum lokalnego ograniczającego jądro"));
+                    .orElse(this.maximum);
       this.highestPositiveLocalMaximum =
           this.input.stream()
                     .filter(point -> Orientation.POSITIVE.equals(point.getOrientation())
                         && LocalExtreme.LOCAL_MAXIMUM.equals(point.getLocalExtreme()))
                     .max(Comparator.comparing(Point::getY))
-                    .orElseThrow((Supplier<Throwable>) () -> new Exception(
-                        "Nie można znaleźć maximum lokalnego ograniczającego jądro"));
+                    .orElse(this.minimum);
       this.verifyCoreExistence();
       Collections.reverse(this.input);
       this.calculateCorePoints();
