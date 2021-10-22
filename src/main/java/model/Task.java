@@ -140,7 +140,7 @@ public class Task implements IntersectingPointCalculator {
   public void printResults() {
 
     System.out.println(this.id);
-    System.out.println(String.format("Posiada jądro: %s", this.core));
+    System.out.println(String.format("Posiada jądro: %s", this.isCore));
     System.out.println(String.format("yLocalMin= %s", this.lowestPositiveLocalMinimum.getY()));
     System.out.println(String.format("yLocalMax= %s", this.highestPositiveLocalMaximum.getY()));
     System.out.println(System.lineSeparator());
