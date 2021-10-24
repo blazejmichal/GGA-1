@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,9 +67,6 @@ public class Task implements IntersectingPointCalculator {
         this.calculateCorePoints();
         this.calculateCoreCircumference();
       }
-      if (this.id == 2) {
-        System.out.println("test");
-      }
       this.printResults();
     } catch (Throwable exception) {
       System.out.println(this.id);
@@ -120,22 +118,16 @@ public class Task implements IntersectingPointCalculator {
 
   public boolean isLocalMinimum(Point first, Point second, Point third) {
 
-    boolean case1 = second.getY() < first.getY()
-        && (second.getY() < third.getY() || second.getY() == third.getY());
-    boolean case2 = (second.getY() < first.getY() || second.getY() == first.getY())
+    boolean result = (second.getY() < first.getY() || Objects.equals(second.getY(), first.getY()))
         && second.getY() < third.getY();
-    boolean result = case1 || case2;
 
     return result;
   }
 
   public boolean isLocalMaximum(Point first, Point second, Point third) {
 
-    boolean case1 = second.getY() > first.getY()
-        && (second.getY() > third.getY() || second.getY() == third.getY());
-    boolean case2 = (second.getY() > first.getY() || second.getY() == first.getY())
+    boolean result = (second.getY() > first.getY() || Objects.equals(second.getY(), first.getY()))
         && second.getY() > third.getY();
-    boolean result = case1 || case2;
 
     return result;
   }
