@@ -51,6 +51,92 @@ public class Main {
         );
         task3.run();
 
+        Task task4 = new Task(
+                4,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 2),
+                        new Point(3, 2),
+                        new Point(2, 2)
+                )
+        );
+        task4.run();
+
+        Task task5 = new Task(
+                5,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 2),
+                        new Point(3, 1),
+                        new Point(2, 2),
+                        new Point(3, 3),
+                        new Point(2, 2),
+                        new Point(1, 3),
+                        new Point(2, 2)
+                )
+        );
+        task5.run();
+
+        Task task6 = new Task(
+                6,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 1),
+                        new Point(3, 2),
+                        new Point(4, 1),
+                        new Point(4, 3),
+                        new Point(3, 3),
+                        new Point(2, 2),
+                        new Point(1, 3)
+                )
+        );
+        task6.run();
+
+        Task task7 = new Task(
+                7,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 1),
+                        new Point(2, 4),
+                        new Point(3, 4),
+                        new Point(3, 1),
+                        new Point(6, 1),
+                        new Point(6, 5),
+                        new Point(5, 5),
+                        new Point(5, 2),
+                        new Point(4, 2),
+                        new Point(4, 5),
+                        new Point(1, 5)
+                )
+        );
+        task7.run();
+
+        Task task8 = new Task(
+                8,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 1),
+                        new Point(3, 2),
+                        new Point(4, 1),
+                        new Point(5, 1),
+                        new Point(3, 3)
+                )
+        );
+        task8.run();
+
+        Task task9 = new Task(
+                9,
+                Lists.newArrayList(
+                        new Point(1, 1),
+                        new Point(2, 4),
+                        new Point(3, 1),
+                        new Point(3, 3),
+                        new Point(2, 0),
+                        new Point(1, 3)
+                )
+        );
+        task9.run();
+
 //    Task task = new Task(
 //        0,
 //        Lists.newArrayList(
