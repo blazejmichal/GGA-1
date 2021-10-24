@@ -163,8 +163,8 @@ public class Task implements IntersectingPointCalculator {
       );
       if (isTopRightCoreCornerIntersection) {
         Point topRightCornerPoint = this.calculateIntersectingPoint(
-            first,
             second,
+            first,
             this.lowestPositiveLocalMinimum.getY()
         );
         this.core.add(topRightCornerPoint);
@@ -191,8 +191,8 @@ public class Task implements IntersectingPointCalculator {
       );
       if (isBottomRightCorner) {
         Point bottomRightCornerPoint = this.calculateIntersectingPoint(
-            first,
             second,
+            first,
             this.highestPositiveLocalMaximum.getY()
         );
         if (first.getY() <= this.lowestPositiveLocalMinimum.getY()
