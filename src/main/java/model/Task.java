@@ -237,9 +237,9 @@ public class Task implements IntersectingPointCalculator {
   public void calculateCoreCircumference() {
 
     double distance = 0d;
-    for (int i = 0; i < this.input.size(); i++) {
-      Point first = this.input.get(i);
-      Point second = i == this.input.size() - 1 ? this.input.get(0) : this.input.get(i + 1);
+    for (int i = 0; i < this.core.size(); i++) {
+      Point first = this.core.get(i);
+      Point second = i == this.core.size() - 1 ? this.core.get(0) : this.core.get(i + 1);
       distance = distance + Math.sqrt(
           (second.getX() - first.getX()) * (second.getX() - first.getX())
               + (second.getY() - first.getY()) * (second.getY() - first.getY()));
